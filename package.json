@@ -1,0 +1,17 @@
+{
+  "name": "ricdotcom",
+  "packageManager": "yarn@3.6.4",
+  "scripts": {
+    "start": "node ./dist/src/index.js",
+    "dev": "ts-node ./src/index.ts"
+  },
+  "dependencies": {
+    "@discordjs/voice": "^0.16.1",
+    "discord.js": "^14.14.1",
+    "libsodium-wrappers": "^0.7.13"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
