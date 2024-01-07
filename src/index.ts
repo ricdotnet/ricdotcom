@@ -3,11 +3,14 @@ import {token, guild_id} from "../config.json";
 import {RegisterCommands} from "./registerCommands";
 import {Commands} from "./commands";
 import {Command} from "./command";
+import {AudioManager} from "./lavacord/manager";
 
-const client: Client = new Client({intents: [GatewayIntentBits.Guilds]});
+const client: Client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates]});
 
 client.once(Events.ClientReady, (readyClient: Client<true>) => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+
+    new AudioManager(readyClient.user.id, readyClient);
 });
 
 client.on(Events.InteractionCreate, async (interaction: Interaction) => {
