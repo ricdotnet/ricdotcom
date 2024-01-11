@@ -1,8 +1,8 @@
-import {SlashCommandBuilder} from "discord.js";
-import {joinVoiceChannel} from "@discordjs/voice";
-import {Command} from "../command";
-import {AudioManager} from "../lavacord/manager";
-import {Player} from "lavacord";
+import { SlashCommandBuilder } from "discord.js";
+import { joinVoiceChannel } from "@discordjs/voice";
+import { Command } from "../command";
+import { AudioManager } from "../lavacord/manager";
+import { AudioPlayer } from "../lavacord/audioPlayer";
 
 export class Play extends Command {
     async execute() {
@@ -11,6 +11,14 @@ export class Play extends Command {
 
         if (!channel) return;
 
+        const manager = AudioManager.manager();
+        await manager.join({
+            guild: channel.guildId,
+            channel: channel.id,
+            node: "1"
+        });
+        new AudioPlayer(channel.guildId, channel.id);
+
         joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guildId,
@@ -18,38 +26,12 @@ export class Play extends Command {
             selfDeaf: true,
         });
 
-        const manager = AudioManager.manager();
-        const track = await manager.getSong();
-
-        const player: Player = await manager.join({
-            guild: channel.guildId,
-            channel: channel.id,
-            node: "1"
-        });
-
-        // @ts-ignore
-        await player.play(track.data.encoded);
-
-        player.once("error", error => console.error(error));
-        player.once("end", data => {
-            if (data.type === "TrackEndEvent") {
-                this.next();
-            }
-        });
-
-        await this._interaction.reply('Joined voice channel.');
-    }
-
-    async next() {
-        const manager = AudioManager.manager();
-        const track = await manager.getSong('https://open.spotify.com/track/3anbfgm7kUTIdLibJmQnkk?si=b88f29d930c84767');
-        // @ts-ignore
-        manager.players.get('1')?.play(track.data.encoded);
+        await this._interaction.reply('Joined the Concert voice channel.');
     }
 
     command(): SlashCommandBuilder {
-        return new SlashCommandBuilder()
-            .setName('play')
-            .setDescription('play a song from spotify or youtube');
+      return <SlashCommandBuilder>new SlashCommandBuilder()
+        .setName('play')
+        .setDescription('Join the Concert voice channel');
     }
 }

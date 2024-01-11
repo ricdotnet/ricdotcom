@@ -1,9 +1,10 @@
 import {DiscordPacket, Manager, Rest} from 'lavacord';
 import {Client, GatewayDispatchEvents} from "discord.js";
+import {lavalink_host, lavalink_pass} from "../../config.json";
 
 // Define the nodes array as an example
 const nodes = [
-    {id: "1", host: "localhost", port: 2333, password: "youshallnotpass"}
+    {id: "1", host: lavalink_host, port: 2333, password: lavalink_pass}
 ];
 
 export class AudioManager extends Manager {
@@ -43,8 +44,8 @@ export class AudioManager extends Manager {
         return this._instance;
     }
 
-    getSong(song: string | null = null) {
-        return Rest.load(this.idealNodes[0], song ?? 'https://open.spotify.com/track/7ofV2J7Ndzo2s5NBEgfpxl?si=2d571b763bc841ad');
+    getSong(song: string) {
+        return Rest.load(this.idealNodes[0], song);
     }
 
 }
