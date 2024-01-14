@@ -1,9 +1,11 @@
 import { Command } from "../command";
 import { SlashCommandBuilder } from "discord.js";
-import { AudioPlayer } from "../lavacord/audioPlayer";
+import { AudioPlayer, TTrackLoadingResult } from "../lavacord/audioPlayer";
+import { AudioManager } from "../lavacord/manager";
 
 export class Add extends Command {
   async execute() {
+    const manager = AudioManager.manager();
     const player = AudioPlayer.get();
 
     if (!player) {
@@ -18,8 +20,10 @@ export class Add extends Command {
       return;
     }
 
+    const trackData = await manager.getSong(<string>url.value) as TTrackLoadingResult;
+
     if (url && url.value) {
-      player.add(<string>url.value);
+      player.add(trackData.data);
     }
 
     await this._interaction.reply('Added a song... Total: ' + player.list().length);

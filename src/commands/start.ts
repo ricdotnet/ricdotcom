@@ -1,5 +1,5 @@
 import { Command } from "../command";
-import { SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { AudioPlayer } from "../lavacord/audioPlayer";
 
 export class Start extends Command {
@@ -18,18 +18,34 @@ export class Start extends Command {
       return;
     }
 
-    if (url && url.value) {
-      player.add(<string>url.value);
-    }
+    const channel = this._interaction.channel;
 
-    const track = await player.start();
-
-    if (!track) {
-      await this._interaction.reply('There was no song to play next...');
+    if (!channel) {
+      console.log('Something went wrong and there was no channel available.');
       return;
     }
 
-    await this._interaction.reply('Now playing: ' + track);
+    player.embedMessage = await channel.send({ embeds: [this.buildEmbed('Loading tracks...')] });
+
+    const response = await player.start(<string>url.value);
+
+    // if (!response) {
+    //   await this._interaction.editReply('There was no song to play next...');
+    //   return;
+    // }
+    //
+    // await this._interaction.channel?.send({ embeds: [this.buildEmbed(response)] });
+
+    player.embedMessage.edit({ embeds: [this.buildEmbed(`Now playing: ${response}`)] });
+
+    await this._interaction.deferReply();
+    await this._interaction.deleteReply();
+  }
+
+  private buildEmbed(title: string) {
+    return new EmbedBuilder()
+      .setColor(0x0099FF)
+      .setTitle(title);
   }
 
   command(): SlashCommandBuilder {
