@@ -22,7 +22,7 @@ export class AudioPlayer {
   private readonly channelId: string | undefined;
   private _embedMessage: Message | undefined;
 
-  private static instance: AudioPlayer;
+  private static instance: AudioPlayer | null;
 
   constructor(guildId: string, channelId: string) {
     if (!AudioPlayer.instance) {
@@ -41,6 +41,11 @@ export class AudioPlayer {
     return this.instance;
   }
 
+  static destroy() {
+    console.log('Closing the player...');
+    this.instance = null;
+  }
+
   async start(url: string) {
     const manager = AudioManager.manager();
     const _player = manager.players.get(this.guildId!);
@@ -49,8 +54,11 @@ export class AudioPlayer {
       return;
     }
 
-    _player.once('error', error => console.error(error));
-    _player.on('end', data => {
+    _player.once('error', (error) => {
+      console.error(error);
+      AudioPlayer.destroy();
+    });
+    _player.on('end', (data) => {
       if (data.type === 'TrackEndEvent' && data.reason === 'replaced') return;
       this.next();
     });
@@ -87,6 +95,8 @@ export class AudioPlayer {
     const manager = AudioManager.manager();
 
     await manager.leave(this.guildId!);
+
+    AudioPlayer.destroy();
   }
 
   add(track: TTrackData) {

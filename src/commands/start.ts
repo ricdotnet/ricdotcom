@@ -1,5 +1,5 @@
 import { Command } from "../command";
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ButtonBuilder, EmbedBuilder, SlashCommandBuilder, ButtonStyle, ActionRowBuilder } from "discord.js";
 import { AudioPlayer } from "../lavacord/audioPlayer";
 
 export class Start extends Command {
@@ -25,7 +25,9 @@ export class Start extends Command {
       return;
     }
 
-    player.embedMessage = await channel.send({ embeds: [this.buildEmbed('Loading tracks...')] });
+    player.embedMessage = await channel.send({
+      embeds: [this.buildEmbed('Loading tracks...')],
+    });
 
     const response = await player.start(<string>url.value);
 
@@ -36,7 +38,9 @@ export class Start extends Command {
     //
     // await this._interaction.channel?.send({ embeds: [this.buildEmbed(response)] });
 
-    player.embedMessage.edit({ embeds: [this.buildEmbed(`Now playing: ${response}`)] });
+    player.embedMessage.edit({
+      embeds: [this.buildEmbed(`Now playing: ${response}`)],
+    });
 
     await this._interaction.deferReply();
     await this._interaction.deleteReply();
