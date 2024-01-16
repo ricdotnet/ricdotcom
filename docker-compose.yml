@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  ricdotcom:
+    image: ricdotcom:latest
+    container_name: ricdotcom
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
