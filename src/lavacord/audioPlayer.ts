@@ -1,8 +1,9 @@
 import { AudioManager } from "./manager";
 
-type TTrackData = {
+export type TTrackData = {
   encoded: string;
   info: {
+    author: string;
     title: string;
     artworkUrl: string;
   };
