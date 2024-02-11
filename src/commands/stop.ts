@@ -7,12 +7,13 @@ export class Stop extends Command {
     const player = AudioPlayer.get();
 
     if (!player) {
+      await this._interaction.reply('There is no player to stop... stopping anyway eheh');
       return;
     }
 
     await player.stop();
 
-    await player.embedMessage?.edit({ embeds: [this.buildEmbed()] });
+    await this._interaction.channel?.send({ embeds: [this.buildEmbed()] });
 
     await this._interaction.deferReply();
     await this._interaction.deleteReply();

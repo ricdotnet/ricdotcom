@@ -1,9 +1,14 @@
 import { Command } from "../command";
-import { ButtonBuilder, EmbedBuilder, SlashCommandBuilder, ButtonStyle, ActionRowBuilder } from "discord.js";
+import { EmbedBuilder, Message, SlashCommandBuilder } from "discord.js";
+import { joinVoiceChannel } from "@discordjs/voice";
 import { AudioPlayer } from "../lavacord/audioPlayer";
+import { AudioManager } from "../lavacord/manager";
 
 export class Start extends Command {
+  private embed: Message | undefined;
+
   async execute() {
+    await this.start();
     const player = AudioPlayer.get();
 
     if (!player) {
@@ -25,31 +30,59 @@ export class Start extends Command {
       return;
     }
 
-    player.embedMessage = await channel.send({
-      embeds: [this.buildEmbed('Loading tracks...')],
+    this.embed = await channel.send({
+      embeds: [new EmbedBuilder().setTitle('Loading tracks...')],
     });
 
-    const response = await player.start(<string>url.value);
+    const track = await player.start(<string>url.value);
 
-    // if (!response) {
-    //   await this._interaction.editReply('There was no song to play next...');
-    //   return;
-    // }
-    //
-    // await this._interaction.channel?.send({ embeds: [this.buildEmbed(response)] });
+    if (!track) {
+      await this._interaction.editReply('There was no song to play next...');
+      return;
+    }
 
-    player.embedMessage.edit({
-      embeds: [this.buildEmbed(`Now playing: ${response}`)],
+    this.embed.edit({
+      embeds: [this.buildEmbed(track.info.title, track.info.artworkUrl)],
     });
 
     await this._interaction.deferReply();
     await this._interaction.deleteReply();
   }
 
-  private buildEmbed(title: string) {
-    return new EmbedBuilder()
-      .setColor(0x0099FF)
-      .setTitle(title);
+  private buildEmbed(title: string, image?: string) {
+    const builder = new EmbedBuilder();
+
+    builder.setColor(0x0099FF)
+      .setTitle('Now playing:')
+      .setDescription(title);
+
+    if (image) {
+      builder.setThumbnail(image);
+    }
+
+    return builder;
+  }
+
+  private async start() {
+    const channels = this._interaction.guild?.channels;
+    const channel = channels?.cache.find(c => c.name === 'Concert');
+
+    if (!channel) return;
+
+    const manager = AudioManager.manager();
+    await manager.join({
+      guild: channel.guildId,
+      channel: channel.id,
+      node: "1"
+    });
+    new AudioPlayer(channel.guildId, channel.id);
+
+    joinVoiceChannel({
+      channelId: channel.id,
+      guildId: channel.guildId,
+      adapterCreator: channel.guild.voiceAdapterCreator,
+      selfDeaf: true,
+    });
   }
 
   command(): SlashCommandBuilder {

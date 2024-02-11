@@ -1,10 +1,10 @@
 import { AudioManager } from "./manager";
-import { Message } from "discord.js";
 
 type TTrackData = {
   encoded: string;
   info: {
     title: string;
+    artworkUrl: string;
   };
   pluginInfo: object;
   userData: object;
@@ -20,8 +20,7 @@ export class AudioPlayer {
   private readonly songs: TTrackData[] = [];
   private readonly guildId: string | undefined;
   private readonly channelId: string | undefined;
-  private _embedMessage: Message | undefined;
-
+  
   private static instance: AudioPlayer | null;
 
   constructor(guildId: string, channelId: string) {
@@ -46,7 +45,7 @@ export class AudioPlayer {
     this.instance = null;
   }
 
-  async start(url: string) {
+  async start(url: string): Promise<TTrackData  | undefined> {
     const manager = AudioManager.manager();
     const _player = manager.players.get(this.guildId!);
 
@@ -72,7 +71,8 @@ export class AudioPlayer {
 
     if (trackData.loadType === 'playlist') {
       if (!trackData.data.tracks) {
-        return 'No tracks on this playlist...';
+        return;
+        // return 'No tracks on this playlist...';
       }
 
       this.songs.push(...trackData.data.tracks);
@@ -83,12 +83,12 @@ export class AudioPlayer {
         await _player.play(track.encoded);
       }
 
-      return track?.info.title;
+      return track;
     }
 
     await _player.play(trackData.data.encoded);
 
-    return trackData.data.info.title;
+    return trackData.data;
   }
 
   async stop() {
@@ -120,22 +120,10 @@ export class AudioPlayer {
 
     await _player.play(track.encoded);
 
-    return track.info.title;
+    return track;
   }
 
   list() {
     return this.songs;
-  }
-
-  set embedMessage(message: Message) {
-    this._embedMessage = message;
-  }
-
-  get embedMessage(): Message | void {
-    if (!this._embedMessage) {
-      console.log('There is no embed message to update.');
-      return;
-    }
-    return this._embedMessage;
   }
 }
