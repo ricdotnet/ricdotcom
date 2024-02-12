@@ -1,10 +1,10 @@
-import { Command } from "../command";
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { AudioPlayer } from "../lavacord/audioPlayer";
+import { Command } from '../command';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { AudioPlayer } from '../lavacord/audioPlayer';
 
 export class Next extends Command {
   async execute() {
-      const player = AudioPlayer.get();
+    const player = AudioPlayer.get();
 
     if (!player) {
       await this._interaction.reply('Start a listening session with /play');
@@ -29,9 +29,7 @@ export class Next extends Command {
   private buildEmbed(title: string, image?: string) {
     const builder = new EmbedBuilder();
 
-    builder.setColor(0x0099FF)
-      .setTitle('Now playing:')
-      .setDescription(title);
+    builder.setColor(0x0099ff).setTitle('Now playing:').setDescription(title);
 
     if (image) {
       builder.setThumbnail(image);
@@ -40,10 +38,11 @@ export class Next extends Command {
     return builder;
   }
 
-
   command(): SlashCommandBuilder {
-    return <SlashCommandBuilder>new SlashCommandBuilder()
-      .setName('next')
-      .setDescription('Start playing songs.');
+    return <SlashCommandBuilder>(
+      new SlashCommandBuilder()
+        .setName('next')
+        .setDescription('Start playing songs.')
+    );
   }
 }

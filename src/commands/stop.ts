@@ -1,13 +1,15 @@
-import { Command } from "../command";
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { AudioPlayer } from "../lavacord/audioPlayer";
+import { Command } from '../command';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { AudioPlayer } from '../lavacord/audioPlayer';
 
 export class Stop extends Command {
   async execute() {
     const player = AudioPlayer.get();
 
     if (!player) {
-      await this._interaction.reply('There is no player to stop... stopping anyway eheh');
+      await this._interaction.reply(
+        'There is no player to stop... stopping anyway eheh',
+      );
       return;
     }
 
@@ -21,7 +23,7 @@ export class Stop extends Command {
 
   private buildEmbed(): EmbedBuilder {
     return new EmbedBuilder()
-      .setColor(0x0099FF)
+      .setColor(0x0099ff)
       .setTitle('Audio player stopped.');
   }
 

@@ -1,4 +1,4 @@
-import { AudioManager } from "./manager";
+import { AudioManager } from './manager';
 
 export type TTrackData = {
   encoded: string;
@@ -10,18 +10,18 @@ export type TTrackData = {
   pluginInfo: object;
   userData: object;
   tracks?: TTrackData[];
-}
+};
 
 export type TTrackLoadingResult = {
   loadType: 'track' | 'playlist';
   data: TTrackData;
-}
+};
 
 export class AudioPlayer {
   private readonly songs: TTrackData[] = [];
   private readonly guildId: string | undefined;
   private readonly channelId: string | undefined;
-  
+
   private static instance: AudioPlayer | null;
 
   constructor(guildId: string, channelId: string) {
@@ -38,17 +38,21 @@ export class AudioPlayer {
   }
 
   static get() {
-    return this.instance;
+    return AudioPlayer.instance;
   }
 
   static destroy() {
     console.log('Closing the player...');
-    this.instance = null;
+    AudioPlayer.instance = null;
   }
 
-  async start(url: string): Promise<TTrackData  | undefined> {
+  async start(url: string): Promise<TTrackData | undefined> {
+    if (!this.guildId) {
+      throw new Error('GuildId is not set');
+    }
+
     const manager = AudioManager.manager();
-    const _player = manager.players.get(this.guildId!);
+    const _player = manager.players.get(this.guildId);
 
     if (!_player) {
       return;
@@ -68,7 +72,7 @@ export class AudioPlayer {
     //   return;
     // }
 
-    const trackData = await manager.getSong(url) as TTrackLoadingResult;
+    const trackData = (await manager.getSong(url)) as TTrackLoadingResult;
 
     if (trackData.loadType === 'playlist') {
       if (!trackData.data.tracks) {
@@ -93,9 +97,12 @@ export class AudioPlayer {
   }
 
   async stop() {
-    const manager = AudioManager.manager();
+    if (!this.guildId) {
+      throw new Error('GuildId is not set');
+    }
 
-    await manager.leave(this.guildId!);
+    const manager = AudioManager.manager();
+    await manager.leave(this.guildId);
 
     AudioPlayer.destroy();
   }
@@ -105,8 +112,12 @@ export class AudioPlayer {
   }
 
   async next() {
+    if (!this.guildId) {
+      throw new Error('GuildId is not set');
+    }
+
     const manager = AudioManager.manager();
-    const _player = manager.players.get(this.guildId!);
+    const _player = manager.players.get(this.guildId);
 
     if (!_player) {
       return;

@@ -1,8 +1,8 @@
-import { Command } from "../command";
-import { EmbedBuilder, Message, SlashCommandBuilder } from "discord.js";
-import { joinVoiceChannel } from "@discordjs/voice";
-import { AudioPlayer } from "../lavacord/audioPlayer";
-import { AudioManager } from "../lavacord/manager";
+import { Command } from '../command';
+import { EmbedBuilder, Message, SlashCommandBuilder } from 'discord.js';
+import { joinVoiceChannel } from '@discordjs/voice';
+import { AudioPlayer } from '../lavacord/audioPlayer';
+import { AudioManager } from '../lavacord/manager';
 
 export class Start extends Command {
   private embed: Message | undefined;
@@ -19,7 +19,9 @@ export class Start extends Command {
     const url = this._interaction.options.get('url');
 
     if (!url) {
-      await this._interaction.reply('You must specify a spotify or youtube urls.');
+      await this._interaction.reply(
+        'You must specify a spotify or youtube urls.',
+      );
       return;
     }
 
@@ -52,9 +54,7 @@ export class Start extends Command {
   private buildEmbed(title: string, image?: string) {
     const builder = new EmbedBuilder();
 
-    builder.setColor(0x0099FF)
-      .setTitle('Now playing:')
-      .setDescription(title);
+    builder.setColor(0x0099ff).setTitle('Now playing:').setDescription(title);
 
     if (image) {
       builder.setThumbnail(image);
@@ -65,7 +65,7 @@ export class Start extends Command {
 
   private async start() {
     const channels = this._interaction.guild?.channels;
-    const channel = channels?.cache.find(c => c.name === 'Concert');
+    const channel = channels?.cache.find((c) => c.name === 'Concert');
 
     if (!channel) return;
 
@@ -73,7 +73,7 @@ export class Start extends Command {
     await manager.join({
       guild: channel.guildId,
       channel: channel.id,
-      node: "1"
+      node: '1',
     });
     new AudioPlayer(channel.guildId, channel.id);
 
@@ -90,7 +90,7 @@ export class Start extends Command {
       .setName('start')
       .setDescription('Start playing songs.')
       .addStringOption((option) =>
-        option.setName('url')
-          .setDescription('Enter a spotify link'));
+        option.setName('url').setDescription('Enter a spotify link'),
+      );
   }
 }

@@ -1,13 +1,22 @@
-import { Command } from "../command";
-import { Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder, Interaction, SlashCommandBuilder } from "discord.js";
-import { AudioPlayer, TTrackData } from "../lavacord/audioPlayer";
+import { Command } from '../command';
+import {
+  Message,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  CommandInteraction,
+  EmbedBuilder,
+  Interaction,
+  SlashCommandBuilder,
+} from 'discord.js';
+import { AudioPlayer, TTrackData } from '../lavacord/audioPlayer';
 
 export class Queue extends Command {
   private player: AudioPlayer | null | undefined; // oof
   private queue: TTrackData[] | undefined;
 
-  private currentPage: number = 1;
-  private totalPages: number = 1;
+  private currentPage = 1;
+  private totalPages = 1;
 
   async execute() {
     this.player = AudioPlayer.get();
@@ -34,12 +43,17 @@ export class Queue extends Command {
     try {
       await this.paginate(pagination);
     } catch (err) {
-      await this._interaction.editReply('Timed out... use /queue to get the current song queue.');
+      await this._interaction.editReply(
+        'Timed out... use /queue to get the current song queue.',
+      );
     }
   }
 
   private async paginate(pagination: Message) {
-    const confirmation = await pagination.awaitMessageComponent({ filter: this.collectorFilter(this._interaction), time: 60_000 });
+    const confirmation = await pagination.awaitMessageComponent({
+      filter: this.collectorFilter(this._interaction),
+      time: 60_000,
+    });
 
     if (confirmation.customId === 'next-page') {
       this.currentPage += 1;
@@ -58,7 +72,7 @@ export class Queue extends Command {
   private collectorFilter(_i: CommandInteraction) {
     return (i: Interaction) => {
       return i.user.id === _i.user.id;
-    }
+    };
   }
 
   private buildActionRow() {
@@ -80,14 +94,18 @@ export class Queue extends Command {
       nextPage.setDisabled(true);
     }
 
-    return new ActionRowBuilder<ButtonBuilder>()
-      .addComponents(prevPage, nextPage);
+    return new ActionRowBuilder<ButtonBuilder>().addComponents(
+      prevPage,
+      nextPage,
+    );
   }
 
   private buildEmbed() {
     const embed = new EmbedBuilder()
       .setTitle('The current song queue')
-      .setDescription(`There are currently ${this.queue?.length} songs on the queue`);
+      .setDescription(
+        `There are currently ${this.queue?.length} songs on the queue`,
+      );
 
     const start = this.currentPage === 1 ? 0 : (this.currentPage - 1) * 10;
     const end = start + 10;
@@ -103,18 +121,23 @@ export class Queue extends Command {
       const _author = paginatedQueue[i].info.author;
 
       embed.addFields({
-        name: _title === '' ? '**no title**' : _title , value: _author === '' ? '**no author**' : _author,
+        name: _title === '' ? '**no title**' : _title,
+        value: _author === '' ? '**no author**' : _author,
       });
     }
 
-    embed.setFooter({ text: `Page ${this.currentPage} of ${this.totalPages} pages` });
+    embed.setFooter({
+      text: `Page ${this.currentPage} of ${this.totalPages} pages`,
+    });
 
     return embed;
   }
 
   command(): SlashCommandBuilder {
-    return <SlashCommandBuilder>new SlashCommandBuilder()
-      .setName('queue')
-      .setDescription('View the current song queue');
+    return <SlashCommandBuilder>(
+      new SlashCommandBuilder()
+        .setName('queue')
+        .setDescription('View the current song queue')
+    );
   }
 }

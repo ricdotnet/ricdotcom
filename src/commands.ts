@@ -1,17 +1,17 @@
 export class Commands extends Map {
-    private static _instance: Commands
+  private static _instance: Commands;
 
-    constructor() {
-        if (Commands._instance !== undefined) {
-            console.warn('The commands collection is already instantiated.');
-            return;
-        }
-        super();
-
-        Commands._instance = this;
+  constructor() {
+    super();
+    if (Commands._instance !== undefined) {
+      console.warn("The commands collection is already instantiated.");
+      return;
     }
 
-    static instance() {
-        return this._instance;
-    }
+    Commands._instance = this;
+  }
+
+  static instance() {
+    return Commands._instance;
+  }
 }
