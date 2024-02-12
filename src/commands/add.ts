@@ -1,12 +1,13 @@
 import { Command } from '../command';
 import { SlashCommandBuilder } from 'discord.js';
-import { AudioPlayer, TTrackLoadingResult } from '../lavacord/audioPlayer';
+import { AudioPlayer, TTrackLoadingResult } from '../lavacord/audio-player';
 import { AudioManager } from '../lavacord/manager';
+import { RuntimeData } from '../runtime-data';
 
 export class Add extends Command {
   async execute() {
     const manager = AudioManager.manager();
-    const player = AudioPlayer.get();
+    const player = RuntimeData.get().getPlayer(this.guildId());
 
     if (!player) {
       await this._interaction.reply('Start a listening session with /play');

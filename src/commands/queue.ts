@@ -9,7 +9,8 @@ import {
   Interaction,
   SlashCommandBuilder,
 } from 'discord.js';
-import { AudioPlayer, TTrackData } from '../lavacord/audioPlayer';
+import { AudioPlayer, TTrackData } from '../lavacord/audio-player';
+import { RuntimeData } from '../runtime-data';
 
 export class Queue extends Command {
   private player: AudioPlayer | null | undefined; // oof
@@ -19,7 +20,7 @@ export class Queue extends Command {
   private totalPages = 1;
 
   async execute() {
-    this.player = AudioPlayer.get();
+    this.player = RuntimeData.get().getPlayer(this.guildId());
 
     if (!this.player) {
       await this._interaction.reply('Start a listening session with /play');

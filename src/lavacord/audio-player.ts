@@ -1,4 +1,6 @@
+import { Channel } from 'discord.js';
 import { AudioManager } from './manager';
+import { nowPlayingEmbed } from './audio-utils';
 
 export type TTrackData = {
   encoded: string;
@@ -22,28 +24,17 @@ export class AudioPlayer {
   private readonly guildId: string | undefined;
   private readonly channelId: string | undefined;
 
-  private static instance: AudioPlayer | null;
-
   constructor(guildId: string, channelId: string) {
-    if (!AudioPlayer.instance) {
-      this.songs = [];
+    this.songs = [];
 
-      this.guildId = guildId;
-      this.channelId = channelId;
+    this.guildId = guildId;
+    this.channelId = channelId;
 
-      console.log('Opened an audio player.');
-
-      AudioPlayer.instance = this;
-    }
-  }
-
-  static get() {
-    return AudioPlayer.instance;
+    console.log(`Opened an audio player for guild: ${this.guildId}`);
   }
 
   static destroy() {
     console.log('Closing the player...');
-    AudioPlayer.instance = null;
   }
 
   async start(url: string): Promise<TTrackData | undefined> {
@@ -63,7 +54,12 @@ export class AudioPlayer {
       AudioPlayer.destroy();
     });
     _player.on('end', (data) => {
-      if (data.type === 'TrackEndEvent' && data.reason === 'replaced') return;
+      if (
+        data.type === 'TrackEndEvent' &&
+        (data.reason === 'replaced' || data.reason === 'cleanup')
+      ) {
+        return;
+      }
       this.next();
     });
 
@@ -101,10 +97,10 @@ export class AudioPlayer {
       throw new Error('GuildId is not set');
     }
 
+    console.log(`Stopped audio player for guild: ${this.guildId}`);
+
     const manager = AudioManager.manager();
     await manager.leave(this.guildId);
-
-    AudioPlayer.destroy();
   }
 
   add(track: TTrackData) {
@@ -131,6 +127,17 @@ export class AudioPlayer {
     }
 
     await _player.play(track.encoded);
+
+    if (this.channelId) {
+      const channel: Channel | undefined = AudioManager.manager()
+        .getClient()
+        .channels.cache.get(this.channelId);
+
+      // @ts-expect-error
+      channel?.send({
+        embeds: [nowPlayingEmbed(track.info.title, track.info.artworkUrl)],
+      });
+    }
 
     return track;
   }

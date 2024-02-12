@@ -9,6 +9,7 @@ const nodes = [
 
 export class AudioManager extends Manager {
   private static _instance: AudioManager;
+  private readonly _client: Client;
 
   constructor(clientId: string, client: Client) {
     super(nodes, {
@@ -18,6 +19,8 @@ export class AudioManager extends Manager {
         guild?.shard.send(packet);
       },
     });
+    
+    this._client = client;
 
     this.connect().then(() => {
       console.log('Connected to lavalink...');
@@ -28,11 +31,11 @@ export class AudioManager extends Manager {
       console.log(node.id);
     });
 
-    client.ws.on(GatewayDispatchEvents.VoiceServerUpdate, (data) => {
+    this._client.ws.on(GatewayDispatchEvents.VoiceServerUpdate, (data) => {
       this.voiceServerUpdate(data);
     });
 
-    client.ws.on(GatewayDispatchEvents.VoiceStateUpdate, (data) => {
+    this._client.ws.on(GatewayDispatchEvents.VoiceStateUpdate, (data) => {
       this.voiceStateUpdate(data);
     });
 
@@ -45,5 +48,9 @@ export class AudioManager extends Manager {
 
   getSong(song: string) {
     return Rest.load(this.idealNodes[0], song);
+  }
+  
+  getClient() {
+    return this._client;
   }
 }

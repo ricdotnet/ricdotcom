@@ -1,15 +1,18 @@
 import { Command } from '../command';
 import { EmbedBuilder, Message, SlashCommandBuilder } from 'discord.js';
 import { joinVoiceChannel } from '@discordjs/voice';
-import { AudioPlayer } from '../lavacord/audioPlayer';
+import { AudioPlayer } from '../lavacord/audio-player';
 import { AudioManager } from '../lavacord/manager';
+import { RuntimeData } from '../runtime-data';
+import { audioStartedEmbed, nowPlayingEmbed } from '../lavacord/audio-utils';
 
 export class Start extends Command {
   private embed: Message | undefined;
 
   async execute() {
     await this.start();
-    const player = AudioPlayer.get();
+
+    const player = RuntimeData.get().getPlayer(this.guildId());
 
     if (!player) {
       await this._interaction.reply('Start a listening session with /play');
@@ -32,6 +35,10 @@ export class Start extends Command {
       return;
     }
 
+    await channel.send({
+      embeds: [audioStartedEmbed()],
+    });
+
     this.embed = await channel.send({
       embeds: [new EmbedBuilder().setTitle('Loading tracks...')],
     });
@@ -44,23 +51,11 @@ export class Start extends Command {
     }
 
     this.embed.edit({
-      embeds: [this.buildEmbed(track.info.title, track.info.artworkUrl)],
+      embeds: [nowPlayingEmbed(track.info.title, track.info.artworkUrl)],
     });
 
     await this._interaction.deferReply();
     await this._interaction.deleteReply();
-  }
-
-  private buildEmbed(title: string, image?: string) {
-    const builder = new EmbedBuilder();
-
-    builder.setColor(0x0099ff).setTitle('Now playing:').setDescription(title);
-
-    if (image) {
-      builder.setThumbnail(image);
-    }
-
-    return builder;
   }
 
   private async start() {
@@ -75,7 +70,12 @@ export class Start extends Command {
       channel: channel.id,
       node: '1',
     });
-    new AudioPlayer(channel.guildId, channel.id);
+
+    const player = new AudioPlayer(
+      channel.guildId,
+      this._interaction.channelId,
+    );
+    RuntimeData.get().addPlayer(channel.guildId, player);
 
     joinVoiceChannel({
       channelId: channel.id,

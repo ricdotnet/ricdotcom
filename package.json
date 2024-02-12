@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@discordjs/voice": "^0.16.1",
+    "@ricdotnet/logger": "^0.2.2",
     "discord.js": "^14.14.1",
     "lavacord": "^2.1.2-v4",
     "libsodium-wrappers": "^0.7.13"

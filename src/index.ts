@@ -10,6 +10,7 @@ import { RegisterCommands } from "./registerCommands";
 import { Commands } from "./commands";
 import { Command } from "./command";
 import { AudioManager } from "./lavacord/manager";
+import { RuntimeData } from "./runtime-data";
 
 const client: Client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
@@ -18,6 +19,7 @@ const client: Client = new Client({
 client.once(Events.ClientReady, (readyClient: Client<true>) => {
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 
+	new RuntimeData();
 	new AudioManager(readyClient.user.id, readyClient);
 });
 
