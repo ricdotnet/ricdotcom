@@ -13,13 +13,9 @@ export function nowPlayingEmbed(title: string, image?: string): EmbedBuilder {
 }
 
 export function audioStartedEmbed(): EmbedBuilder {
-  return new EmbedBuilder()
-    .setColor(0x08a61b)
-    .setTitle('Audio player started');
+  return new EmbedBuilder().setColor(0x08a61b).setTitle('Audio player started');
 }
 
 export function audioStoppedEmbed(): EmbedBuilder {
-  return new EmbedBuilder()
-      .setColor(0xd41111)
-      .setTitle('Audio player stopped.');
+  return new EmbedBuilder().setColor(0xd41111).setTitle('Audio player stopped.');
 }
