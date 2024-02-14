@@ -21,25 +21,29 @@ export class AudioManager extends Manager {
     });
     
     this._client = client;
+  }
 
-    this.connect().then(() => {
-      console.log('Connected to lavalink...');
+  async load() {
+    return new Promise((resolve, _) => {
+      this.on('error', (error, node) => {
+        console.log(error);
+        console.log(node.id);
+      });
+
+      this._client.ws.on(GatewayDispatchEvents.VoiceServerUpdate, (data) => {
+        this.voiceServerUpdate(data);
+      });
+
+      this._client.ws.on(GatewayDispatchEvents.VoiceStateUpdate, (data) => {
+        this.voiceStateUpdate(data);
+      });
+
+      AudioManager._instance = this;
+      
+      this.connect().then(() => {
+        resolve(true);
+      });
     });
-
-    this.on('error', (error, node) => {
-      console.log(error);
-      console.log(node.id);
-    });
-
-    this._client.ws.on(GatewayDispatchEvents.VoiceServerUpdate, (data) => {
-      this.voiceServerUpdate(data);
-    });
-
-    this._client.ws.on(GatewayDispatchEvents.VoiceStateUpdate, (data) => {
-      this.voiceStateUpdate(data);
-    });
-
-    AudioManager._instance = this;
   }
 
   static manager(): AudioManager {
@@ -49,7 +53,7 @@ export class AudioManager extends Manager {
   getSong(song: string) {
     return Rest.load(this.idealNodes[0], song);
   }
-  
+
   getClient() {
     return this._client;
   }

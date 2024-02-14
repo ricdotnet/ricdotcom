@@ -1,5 +1,6 @@
 import { Client, Events, Guild } from 'discord.js';
 import { RegisterCommands } from '../register-commands';
+import { prisma } from '../../prisma';
 
 export class CreateGuild {
   constructor(client: Client) {
@@ -7,11 +8,16 @@ export class CreateGuild {
   }
 
   async onCreateGuild(guild: Guild) {
-    console.log('creating a discord bot for:', guild.id)
+    console.log('Creating a discord bot for:', guild.id)
     
     const guildId = guild.id;
-    const commands = new RegisterCommands(guildId);
-    await commands.load();
-    await commands.register();
+    const commands = new RegisterCommands();
+    await commands.register(guildId);
+    
+    await prisma.server.create({
+      data: {
+        guildId: guildId,
+      }
+    });
   }
 }

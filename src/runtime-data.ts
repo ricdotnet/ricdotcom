@@ -7,14 +7,17 @@ export class RuntimeData {
   // @ts-ignore
   private audioPlayers: Map<Snowflake, AudioPlayer>;
 
-  constructor() {
-    if (!RuntimeData._instance) {
-      this.audioPlayers = new Map<Snowflake, AudioPlayer>();
+  async load() {
+    return new Promise((resolve, reject) => {
+      if (RuntimeData._instance) {
+        reject();
+      }
       
-      console.log('Opened a RuntimeData container');
-
+      this.audioPlayers = new Map<Snowflake, AudioPlayer>();
       RuntimeData._instance = this;
-    }
+
+      resolve(true);
+    });
   }
 
   addPlayer(guildId: Snowflake, player: AudioPlayer) {
