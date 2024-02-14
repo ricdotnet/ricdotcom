@@ -1,6 +1,7 @@
 import { DiscordPacket, Manager, Rest } from 'lavacord';
 import { Client, GatewayDispatchEvents } from 'discord.js';
 import { lavalink_host, lavalink_pass } from '../../config.json';
+import { Logger } from '@ricdotnet/logger/dist';
 
 // Define the nodes array as an example
 const nodes = [
@@ -26,8 +27,8 @@ export class AudioManager extends Manager {
   async load() {
     return new Promise((resolve, _) => {
       this.on('error', (error, node) => {
-        console.log(error);
-        console.log(node.id);
+        Logger.get().error(<string>error);
+        Logger.get().debug(node.id);
       });
 
       this._client.ws.on(GatewayDispatchEvents.VoiceServerUpdate, (data) => {

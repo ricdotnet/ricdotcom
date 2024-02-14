@@ -1,6 +1,7 @@
 import { REST, Routes, Snowflake } from 'discord.js';
 import { token, client_id } from '../config.json';
 import { Commands } from './commands';
+import { Logger } from '@ricdotnet/logger/dist';
 
 type RestResponse = {
   [key: string]: string | number | boolean | null;
@@ -17,7 +18,7 @@ export class RegisterCommands {
     const commands = Commands.instance().getCommands();
     
     try {
-      console.log(
+      Logger.get().info(
         `Started refreshing ${commands.length} application (/) commands for: ${guildId}`,
       );
 
@@ -27,7 +28,7 @@ export class RegisterCommands {
         { body: commands },
       )) as RestResponse;
 
-      console.log(
+      Logger.get().info(
         `Successfully reloaded ${data.length} application (/) commands for: ${guildId}`,
       );
     } catch (error) {

@@ -4,6 +4,7 @@ import { AudioManager } from '../lavacord/manager';
 import { prisma } from '../../prisma';
 import { Commands } from '../commands';
 import { RegisterCommands } from '../register-commands';
+import { Logger } from '@ricdotnet/logger/dist';
 
 export class ClientReady {
   constructor(client: Client) {
@@ -11,16 +12,16 @@ export class ClientReady {
   }
 
   async onClientReady(readyClient: Client<true>) {
-    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+    Logger.get().info(`Ready! Logged in as ${readyClient.user.tag}`);
 
     await new Commands().load();
-    console.log('Commands loaded into commands collection');
+    Logger.get().info('Commands loaded into commands collection');
     
     await new RuntimeData().load();
-    console.log('RuntimeData container created');
+    Logger.get().info('RuntimeData container created');
 
     await new AudioManager(readyClient.user.id, readyClient).load();
-    console.log('AudioManager created');
+    Logger.get().info('AudioManager created');
 
     const servers = await prisma.server.findMany();
     const commands = new RegisterCommands();

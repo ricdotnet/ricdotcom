@@ -1,6 +1,7 @@
 import { Client, Events, Guild } from 'discord.js';
 import { RegisterCommands } from '../register-commands';
 import { prisma } from '../../prisma';
+import { Logger } from '@ricdotnet/logger/dist';
 
 export class CreateGuild {
   constructor(client: Client) {
@@ -8,7 +9,7 @@ export class CreateGuild {
   }
 
   async onCreateGuild(guild: Guild) {
-    console.log('Creating a discord bot for:', guild.id)
+    Logger.get().info(`Creating a discord bot for: ${guild.id}`);
     
     const guildId = guild.id;
     const commands = new RegisterCommands();

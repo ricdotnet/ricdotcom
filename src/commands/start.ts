@@ -5,6 +5,7 @@ import { AudioPlayer } from '../lavacord/audio-player';
 import { AudioManager } from '../lavacord/manager';
 import { RuntimeData } from '../runtime-data';
 import { audioStartedEmbed, nowPlayingEmbed } from '../lavacord/audio-utils';
+import { Logger } from '@ricdotnet/logger/dist';
 
 export class Start extends Command {
   private embed: Message | undefined;
@@ -31,7 +32,7 @@ export class Start extends Command {
     const channel = this._interaction.channel;
 
     if (!channel) {
-      console.log('Something went wrong and there was no channel available.');
+      Logger.get().warn('Something went wrong and there was no channel available.');
       return;
     }
 

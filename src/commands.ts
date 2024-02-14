@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Command } from './command';
+import { Logger } from '@ricdotnet/logger/dist';
 
 export class Commands extends Map {
   private static _instance: Commands;
@@ -9,7 +10,7 @@ export class Commands extends Map {
   constructor() {
     super();
     if (Commands._instance !== undefined) {
-      console.warn("The commands collection is already instantiated.");
+      Logger.get().warn("The commands collection is already instantiated.");
       return;
     }
     
@@ -25,12 +26,10 @@ export class Commands extends Map {
       const className = Object.keys(cmdFile)[0];
       const _class = new cmdFile[className];
       
-      console.log(_class);
-      
       this._commands.push(_class.command().toJSON());
       this.set(_class.command().name, cmdFile[className]);
       
-      console.log(`Loaded command: ${_class.command().name}`);
+      Logger.get().info(`Loaded command: ${_class.command().name}`);
     }
   }
 

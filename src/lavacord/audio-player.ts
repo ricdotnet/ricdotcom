@@ -1,6 +1,7 @@
 import { Channel } from 'discord.js';
 import { AudioManager } from './manager';
 import { nowPlayingEmbed } from './audio-utils';
+import { Logger } from '@ricdotnet/logger/dist';
 
 export type TTrackData = {
   encoded: string;
@@ -30,11 +31,11 @@ export class AudioPlayer {
     this.guildId = guildId;
     this.channelId = channelId;
 
-    console.log(`Opened an audio player for guild: ${this.guildId}`);
+    Logger.get().debug(`Opened an audio player for guild: ${this.guildId}`);
   }
 
   static destroy() {
-    console.log('Closing the player...');
+    Logger.get().debug('Closing the player...');
   }
 
   async start(url: string): Promise<TTrackData | undefined> {
@@ -50,7 +51,7 @@ export class AudioPlayer {
     }
 
     _player.once('error', (error) => {
-      console.error(error);
+      Logger.get().error(error.toString());
       AudioPlayer.destroy();
     });
     _player.on('end', (data) => {
@@ -97,7 +98,7 @@ export class AudioPlayer {
       throw new Error('GuildId is not set');
     }
 
-    console.log(`Stopped audio player for guild: ${this.guildId}`);
+    Logger.get().debug(`Stopped audio player for guild: ${this.guildId}`);
 
     const manager = AudioManager.manager();
     await manager.leave(this.guildId);
