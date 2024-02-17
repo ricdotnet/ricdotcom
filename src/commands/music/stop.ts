@@ -1,7 +1,7 @@
-import { Command } from '../command';
+import { Command } from '../../command';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
-import { RuntimeData } from '../runtime-data';
-import { audioStoppedEmbed } from '../lavacord/audio-utils';
+import { RuntimeData } from '../../runtime-data';
+import { audioStoppedEmbed } from '../../lavacord/audio-utils';
 
 export class Stop extends Command {
   async execute() {

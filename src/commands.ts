@@ -19,7 +19,7 @@ export class Commands extends Map {
   
   async load() {
     const commandsPath = path.join(__dirname, 'commands');
-    const files = fs.readdirSync(commandsPath);
+    const files = this.commandFiles(commandsPath);
 
     for await (const file of files) {
       const cmdFile = await import(path.join(commandsPath, file));
@@ -32,12 +32,23 @@ export class Commands extends Map {
       Logger.get().info(`Loaded command: ${_class.command().name}`);
     }
   }
-
+  
   getCommands(): Command[] {
     return this._commands;
   }
   
   static instance() {
     return Commands._instance;
+  }
+  
+  private commandFiles(commandsPath: string): string[] {
+    return fs.readdirSync(commandsPath, { recursive: true })
+      .filter((file) => {
+        const _file = file.toString();
+        
+        if (_file.endsWith('.ts') || _file.endsWith('.js')) {
+          return _file;
+        }
+      }) as string[];
   }
 }

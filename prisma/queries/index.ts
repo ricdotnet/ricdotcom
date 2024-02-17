@@ -40,9 +40,16 @@ export async function updateLastCommand(guildId: string, date: Date) {
   Logger.get().info(`Last command for guild ${guildId} updated`);
 }
 
-export async function createOrUpdateExistingUserAndMember(guildId: string, userId: string, date: Date, command: string) {
-  Logger.get().info(`Creating or updating entries user and member entries for user ${userId}`);
-  
+export async function createOrUpdateExistingUserAndMember(
+  guildId: string,
+  userId: string,
+  date: Date,
+  command: string,
+) {
+  Logger.get().info(
+    `Creating or updating entries user and member entries for user ${userId}`,
+  );
+
   await prisma.$transaction([
     prisma.user.upsert({
       where: {
@@ -77,8 +84,51 @@ export async function createOrUpdateExistingUserAndMember(guildId: string, userI
         memberUserId: userId,
       },
     }),
+    prisma.economy.create({
+      data: {
+        memberGuildId: guildId,
+        memberUserId: userId,
+      },
+    }),
   ]);
-  
-  Logger.get().info(`User and member entries creater or updated for user ${userId}`);
+
+  Logger.get().info(
+    `User and member entries creater or updated for user ${userId}`,
+  );
   Logger.get().info(`New command (${command}) entry added for user ${userId}`);
+}
+
+export async function getUserBalanse(guildId: string, userId: string) {
+  return prisma.economy.findFirst({
+    where: {
+      memberGuildId: guildId,
+      memberUserId: userId,
+    },
+  });
+}
+
+type UpdateUserBalanceOptions = {
+  holding?: number;
+  bank?: number;
+};
+
+export async function updateUserBalance(
+  guildId: string,
+  userId: string,
+  options: UpdateUserBalanceOptions,
+) {
+  return prisma.economy.updateMany({
+    where: {
+      memberGuildId: guildId,
+      memberUserId: userId,
+    },
+    data: {
+      bank: {
+        increment: options.bank ?? 0,
+      },
+      holding: {
+        increment: options.holding ?? 0,
+      },
+    },
+  });
 }

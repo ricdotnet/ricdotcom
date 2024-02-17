@@ -31,6 +31,7 @@ model Member {
   user    User      @relation(fields: [userId], references: [userId])
   userId  String
   Command Command[]
+  Economy Economy[]
 
   @@id([userId, guildId])
 }
@@ -42,4 +43,13 @@ model Command {
   Member        Member   @relation(fields: [memberUserId, memberGuildId], references: [userId, guildId])
   memberUserId  String
   memberGuildId String
+}
+
+model Economy {
+  id            Int    @id @default(autoincrement())
+  Member        Member @relation(fields: [memberGuildId, memberUserId], references: [guildId, userId])
+  memberGuildId String
+  memberUserId  String
+  holding       Int    @default(10000)
+  bank          Int    @default(0)
 }

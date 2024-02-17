@@ -1,8 +1,8 @@
-import { Command } from '../command';
+import { Command } from '../../command';
 import { SlashCommandBuilder } from 'discord.js';
-import { AudioPlayer, TTrackLoadingResult } from '../lavacord/audio-player';
-import { AudioManager } from '../lavacord/manager';
-import { RuntimeData } from '../runtime-data';
+import { AudioPlayer, TTrackLoadingResult } from '../../lavacord/audio-player';
+import { AudioManager } from '../../lavacord/manager';
+import { RuntimeData } from '../../runtime-data';
 
 export class Add extends Command {
   async execute() {

@@ -1,4 +1,4 @@
-import { Command } from '../command';
+import { Command } from '../../command';
 import {
   Message,
   ActionRowBuilder,
@@ -9,8 +9,8 @@ import {
   Interaction,
   SlashCommandBuilder,
 } from 'discord.js';
-import { AudioPlayer, TTrackData } from '../lavacord/audio-player';
-import { RuntimeData } from '../runtime-data';
+import { AudioPlayer, TTrackData } from '../../lavacord/audio-player';
+import { RuntimeData } from '../../runtime-data';
 
 export class Queue extends Command {
   private player: AudioPlayer | null | undefined; // oof

@@ -16,4 +16,16 @@ export abstract class Command {
     
     return this._interaction.guildId;
   }
+  
+  userId(): Snowflake {
+    if (!this._interaction.user.id) {
+      throw new Error('This interaction had no user id set');
+    }
+    
+    return this._interaction.user.id;
+  }
+  
+  username(): string {
+    return this._interaction.user.username;
+  }
 }

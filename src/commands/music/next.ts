@@ -1,6 +1,6 @@
-import { Command } from '../command';
+import { Command } from '../../command';
 import { SlashCommandBuilder } from 'discord.js';
-import { RuntimeData } from '../runtime-data';
+import { RuntimeData } from '../../runtime-data';
 
 export class Next extends Command {
   async execute() {

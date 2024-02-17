@@ -1,10 +1,10 @@
-import { Command } from '../command';
+import { Command } from '../../command';
 import { EmbedBuilder, Message, SlashCommandBuilder } from 'discord.js';
 import { joinVoiceChannel } from '@discordjs/voice';
-import { AudioPlayer } from '../lavacord/audio-player';
-import { AudioManager } from '../lavacord/manager';
-import { RuntimeData } from '../runtime-data';
-import { audioStartedEmbed, nowPlayingEmbed } from '../lavacord/audio-utils';
+import { AudioPlayer } from '../../lavacord/audio-player';
+import { AudioManager } from '../../lavacord/manager';
+import { RuntimeData } from '../../runtime-data';
+import { audioStartedEmbed, nowPlayingEmbed } from '../../lavacord/audio-utils';
 import { Logger } from '@ricdotnet/logger/dist';
 
 export class Start extends Command {
