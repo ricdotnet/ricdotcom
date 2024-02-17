@@ -3,8 +3,12 @@ import { Commands } from '../commands';
 import { Command } from '../command';
 import { Logger } from '@ricdotnet/logger/dist';
 import { prisma } from '../../prisma';
+import {
+  createOrUpdateExistingUserAndMember,
+  updateLastCommand,
+} from '../../prisma/queries';
 
-export class CreateInteraction {
+export class InteractionCreate {
   constructor(client: Client) {
     client.on(Events.InteractionCreate, this.onInteractionCreate);
   }
@@ -13,15 +17,19 @@ export class CreateInteraction {
     if (!interaction.isChatInputCommand() || !interaction.guildId) return;
     const commandName = interaction.commandName;
     const commandClass = Commands.instance().get(commandName);
+    const guildId = interaction.guildId;
+    const userId = interaction.user.id;
+    const now = new Date();
 
     const log = {
-      guildId: interaction.guildId,
-      command: interaction.commandName,
+      guildId: guildId,
+      command: commandName,
       username: interaction.user.username,
-      userId: interaction.user.id,
-    }
+      userId,
+      date: now,
+    };
     Logger.get().info(`Interaction incoming: ${JSON.stringify(log)}`);
-    
+
     if (!commandClass) {
       interaction.reply('This command does not exist.');
       return;
@@ -31,16 +39,19 @@ export class CreateInteraction {
 
     try {
       await command.execute();
-      await prisma.server.update({
-        // @ts-ignore
-        where: {
-          guildId: interaction.guildId,
-        },
-        data: {
-          lastCommand: new Date(),
-        }
-      });
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+
+      // update last command entry
+      await updateLastCommand(guildId, now);
+
+      // check if member & user exists
+      await createOrUpdateExistingUserAndMember(
+        guildId,
+        userId,
+        now,
+        commandName,
+      );
+
+      // biome-ignore lint/suspicious/noExplicitAny: its just an error
     } catch (err: any) {
       Logger.get().error(err);
     }

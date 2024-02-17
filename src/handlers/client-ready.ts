@@ -23,7 +23,7 @@ export class ClientReady {
     await new AudioManager(readyClient.user.id, readyClient).load();
     Logger.get().info('AudioManager created');
 
-    const servers = await prisma.server.findMany();
+    const servers = await prisma.guild.findMany();
     const commands = new RegisterCommands();
     
     for await (const server of servers) { 

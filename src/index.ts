@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import { token } from '../config.json';
-import { ClientReady, CreateInteraction, CreateGuild } from './interactions';
+import { ClientReady, InteractionCreate, GuildCreate, GuildDelete } from './handlers';
 import { Logger } from '@ricdotnet/logger/dist';
 
 const client: Client = new Client({
@@ -8,8 +8,10 @@ const client: Client = new Client({
 });
 
 new ClientReady(client);
-new CreateInteraction(client);
-new CreateGuild(client);
+new InteractionCreate(client);
+new GuildCreate(client);
+new GuildDelete(client);
+
 new Logger({
   level: 'debug',
   logToFile: false,

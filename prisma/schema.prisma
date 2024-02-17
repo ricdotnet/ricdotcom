@@ -10,9 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Server {
+model Guild {
   id          Int       @id @default(autoincrement())
   createdAt   DateTime  @default(now())
   lastCommand DateTime?
-  guildId     String
+  guildId     String    @unique
+  Member      Member[]
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  userId      String    @unique
+  lastCommand DateTime?
+  Member      Member[]
+}
+
+model Member {
+  guild   Guild     @relation(fields: [guildId], references: [guildId])
+  guildId String
+  user    User      @relation(fields: [userId], references: [userId])
+  userId  String
+  Command Command[]
+
+  @@id([userId, guildId])
+}
+
+model Command {
+  id            Int      @id @default(autoincrement())
+  command       String
+  createdAt     DateTime
+  Member        Member   @relation(fields: [memberUserId, memberGuildId], references: [userId, guildId])
+  memberUserId  String
+  memberGuildId String
 }
