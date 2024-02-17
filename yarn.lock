@@ -387,10 +387,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ricdotnet/logger@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "@ricdotnet/logger@npm:0.2.2"
-  checksum: 9f78a0a4df1110b630745a60f131ea87a1d6ec976922306262011fe91677b72dfb6c5191e1623f171c2ba2cededecb7dfbaba404846849ec75daa2a0bcfa8fd2
+"@ricdotnet/logger@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@ricdotnet/logger@npm:0.3.0"
+  checksum: 301612e5e9616a0ce69d9b5ebecb23c2a810a294ed6f6f41f6800806b61522265daa33818efbecbc7a2fd17883d5012e738dea44cdde1c51fdb714fdc4daa58e
   languageName: node
   linkType: hard
 
@@ -1552,7 +1552,7 @@ __metadata:
     "@biomejs/biome": 1.5.3
     "@discordjs/voice": ^0.16.1
     "@prisma/client": ^5.9.1
-    "@ricdotnet/logger": ^0.2.2
+    "@ricdotnet/logger": ^0.3.0
     discord.js: ^14.14.1
     eslint: ^8.56.0
     lavacord: ^2.1.2-v4
