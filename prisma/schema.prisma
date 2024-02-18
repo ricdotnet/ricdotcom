@@ -26,12 +26,13 @@ model User {
 }
 
 model Member {
-  guild   Guild     @relation(fields: [guildId], references: [guildId])
-  guildId String
-  user    User      @relation(fields: [userId], references: [userId])
-  userId  String
-  Command Command[]
-  Economy Economy[]
+  guild    Guild      @relation(fields: [guildId], references: [guildId])
+  guildId  String
+  user     User       @relation(fields: [userId], references: [userId])
+  userId   String
+  Command  Command[]
+  Economy  Economy[]
+  Cooldown Cooldown[]
 
   @@id([userId, guildId])
 }
@@ -46,10 +47,21 @@ model Command {
 }
 
 model Economy {
-  id            Int    @id @default(autoincrement())
   Member        Member @relation(fields: [memberGuildId, memberUserId], references: [guildId, userId])
   memberGuildId String
   memberUserId  String
-  holding       Int    @default(10000)
-  bank          Int    @default(0)
+  holding       Float  @default(10000.00)
+  bank          Float  @default(0.00)
+
+  @@id([memberGuildId, memberUserId])
+}
+
+model Cooldown {
+  Member        Member @relation(fields: [memberGuildId, memberUserId], references: [guildId, userId])
+  memberGuildId String
+  memberUserId  String
+  command       String
+  lastUsed      BigInt
+
+  @@unique([command, memberGuildId, memberUserId])
 }

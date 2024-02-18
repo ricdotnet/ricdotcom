@@ -16,7 +16,7 @@ export class ClientReady {
 
     await new Commands().load();
     Logger.get().info('Commands loaded into commands collection');
-    
+
     await new RuntimeData().load();
     Logger.get().info('RuntimeData container created');
 
@@ -25,8 +25,8 @@ export class ClientReady {
 
     const servers = await prisma.guild.findMany();
     const commands = new RegisterCommands();
-    
-    for await (const server of servers) { 
+
+    for await (const server of servers) {
       await commands.register(server.guildId);
     }
   }

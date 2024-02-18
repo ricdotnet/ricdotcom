@@ -20,7 +20,7 @@ export class AudioManager extends Manager {
         guild?.shard.send(packet);
       },
     });
-    
+
     this._client = client;
   }
 
@@ -40,7 +40,7 @@ export class AudioManager extends Manager {
       });
 
       AudioManager._instance = this;
-      
+
       this.connect().then(() => {
         resolve(true);
       });

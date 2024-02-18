@@ -8,7 +8,7 @@ export class GuildDelete {
 
   async onGuildDelete(guild: Guild) {
     const guildId = guild.id;
-    
+
     await deleteGuild(guildId);
   }
 }

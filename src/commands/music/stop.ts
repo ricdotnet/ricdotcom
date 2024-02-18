@@ -15,7 +15,7 @@ export class Stop extends Command {
     }
 
     await player.stop();
-    
+
     RuntimeData.get().deletePlayer(this.guildId());
 
     await this._interaction.channel?.send({ embeds: [audioStoppedEmbed()] });

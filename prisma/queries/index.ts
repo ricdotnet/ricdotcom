@@ -84,8 +84,15 @@ export async function createOrUpdateExistingUserAndMember(
         memberUserId: userId,
       },
     }),
-    prisma.economy.create({
-      data: {
+    prisma.economy.upsert({
+      where: {
+        memberGuildId_memberUserId: {
+          memberGuildId: guildId,
+          memberUserId: userId,
+        },
+      },
+      update: {},
+      create: {
         memberGuildId: guildId,
         memberUserId: userId,
       },
@@ -98,11 +105,13 @@ export async function createOrUpdateExistingUserAndMember(
   Logger.get().info(`New command (${command}) entry added for user ${userId}`);
 }
 
-export async function getUserBalanse(guildId: string, userId: string) {
-  return prisma.economy.findFirst({
+export async function getUserBalance(guildId: string, userId: string) {
+  return prisma.economy.findUnique({
     where: {
-      memberGuildId: guildId,
-      memberUserId: userId,
+      memberGuildId_memberUserId: {
+        memberGuildId: guildId,
+        memberUserId: userId,
+      },
     },
   });
 }
@@ -117,10 +126,12 @@ export async function updateUserBalance(
   userId: string,
   options: UpdateUserBalanceOptions,
 ) {
-  return prisma.economy.updateMany({
+  return prisma.economy.update({
     where: {
-      memberGuildId: guildId,
-      memberUserId: userId,
+      memberGuildId_memberUserId: {
+        memberGuildId: guildId,
+        memberUserId: userId,
+      },
     },
     data: {
       bank: {

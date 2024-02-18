@@ -16,7 +16,7 @@ export class RegisterCommands {
 
   async register(guildId: Snowflake) {
     const commands = Commands.instance().getCommands();
-    
+
     try {
       Logger.get().info(
         `Started refreshing ${commands.length} application (/) commands for: ${guildId}`,

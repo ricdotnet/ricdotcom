@@ -2,13 +2,14 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { Command } from '../../command';
 import { Logger } from '@ricdotnet/logger/dist';
 import { LogLevels } from '@ricdotnet/logger/dist/src/Constants';
-import { getUserBalanse } from '../../../prisma/queries';
+import { getUserBalance } from '../../../prisma/queries';
+import { sendError } from '../../error';
 
 export class Balance extends Command {
   async execute() {
     await this._interaction.deferReply();
 
-    const balance = await getUserBalanse(this.guildId(), this.userId());
+    const balance = await getUserBalance(this.guildId(), this.userId());
 
     if (!balance) {
       Logger.get().fmt(
@@ -17,8 +18,9 @@ export class Balance extends Command {
         this.userId(),
         this.guildId(),
       );
-      await this._interaction.editReply(
-        '❌ An error occurred when trying to get your balance.',
+      await sendError(
+        this._interaction,
+        'An error occurred when trying to get your balance.',
       );
       return;
     }
@@ -27,8 +29,8 @@ export class Balance extends Command {
       .setColor(0x0099ff)
       .setTitle('Your economies')
       .addFields(
-        { name: 'Holding', value: balance.holding.toString(), inline: true },
-        { name: 'Bank', value: balance.bank.toString(), inline: true },
+        { name: '💷 Holding', value: `R£ ${balance.holding}`, inline: true },
+        { name: '💳 Bank', value: `R£ ${balance.bank}`, inline: true },
       );
 
     await this._interaction.editReply({ embeds: [embed] });

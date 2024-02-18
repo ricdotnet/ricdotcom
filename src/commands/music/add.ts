@@ -1,6 +1,6 @@
 import { Command } from '../../command';
 import { SlashCommandBuilder } from 'discord.js';
-import { AudioPlayer, TTrackLoadingResult } from '../../lavacord/audio-player';
+import { TTrackLoadingResult } from '../../lavacord/audio-player';
 import { AudioManager } from '../../lavacord/manager';
 import { RuntimeData } from '../../runtime-data';
 

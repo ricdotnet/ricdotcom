@@ -1,6 +1,11 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import { token } from '../config.json';
-import { ClientReady, InteractionCreate, GuildCreate, GuildDelete } from './handlers';
+import {
+  ClientReady,
+  InteractionCreate,
+  GuildCreate,
+  GuildDelete,
+} from './handlers';
 import { Logger } from '@ricdotnet/logger/dist';
 import { LogLevels } from '@ricdotnet/logger/dist/src/Constants';
 

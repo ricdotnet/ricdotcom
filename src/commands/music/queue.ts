@@ -50,6 +50,7 @@ export class Queue extends Command {
     }
   }
 
+  // it does not paginate recursively... it depends on the interaction with the embed
   private async paginate(pagination: Message) {
     const confirmation = await pagination.awaitMessageComponent({
       filter: this.collectorFilter(this._interaction),

@@ -32,7 +32,9 @@ export class Start extends Command {
     const channel = this._interaction.channel;
 
     if (!channel) {
-      Logger.get().warn('Something went wrong and there was no channel available.');
+      Logger.get().warn(
+        'Something went wrong and there was no channel available.',
+      );
       return;
     }
 

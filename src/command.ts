@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, Snowflake } from "discord.js";
+import { CommandInteraction } from 'discord.js';
 
 export abstract class Command {
   protected readonly _interaction: CommandInteraction;
@@ -9,22 +9,26 @@ export abstract class Command {
 
   async execute() {}
 
-  guildId(): Snowflake {
+  commandName(): string {
+    return this._interaction.commandName;
+  }
+
+  guildId(): string {
     if (!this._interaction.guildId) {
       throw new Error('This interaction had no guild id set');
     }
-    
+
     return this._interaction.guildId;
   }
-  
-  userId(): Snowflake {
+
+  userId(): string {
     if (!this._interaction.user.id) {
       throw new Error('This interaction had no user id set');
     }
-    
+
     return this._interaction.user.id;
   }
-  
+
   username(): string {
     return this._interaction.user.username;
   }

@@ -10,11 +10,11 @@ export class GuildCreate {
 
   async onGuildCreate(guild: Guild) {
     Logger.get().info(`Creating a discord bot for: ${guild.id}`);
-    
+
     const guildId = guild.id;
     const commands = new RegisterCommands();
     await commands.register(guildId);
-    
+
     await createGuild(guildId);
   }
 }

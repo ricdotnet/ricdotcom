@@ -2,7 +2,6 @@ import { Client, Events, Interaction } from 'discord.js';
 import { Commands } from '../commands';
 import { Command } from '../command';
 import { Logger } from '@ricdotnet/logger/dist';
-import { prisma } from '../../prisma';
 import {
   createOrUpdateExistingUserAndMember,
   updateLastCommand,
@@ -38,8 +37,6 @@ export class InteractionCreate {
     const command: Command = new commandClass(interaction);
 
     try {
-      await command.execute();
-
       // update last command entry
       await updateLastCommand(guildId, now);
 
@@ -50,6 +47,8 @@ export class InteractionCreate {
         now,
         commandName,
       );
+
+      await command.execute();
 
       // biome-ignore lint/suspicious/noExplicitAny: its just an error
     } catch (err: any) {

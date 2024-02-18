@@ -17,5 +17,7 @@ export function audioStartedEmbed(): EmbedBuilder {
 }
 
 export function audioStoppedEmbed(): EmbedBuilder {
-  return new EmbedBuilder().setColor(0xd41111).setTitle('Audio player stopped.');
+  return new EmbedBuilder()
+    .setColor(0xd41111)
+    .setTitle('Audio player stopped.');
 }

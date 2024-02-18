@@ -12,7 +12,7 @@ export class RuntimeData {
       if (RuntimeData._instance) {
         reject();
       }
-      
+
       this.audioPlayers = new Map<Snowflake, AudioPlayer>();
       RuntimeData._instance = this;
 
@@ -27,7 +27,7 @@ export class RuntimeData {
   getPlayer(guildId: Snowflake): AudioPlayer | undefined {
     return this.audioPlayers.get(guildId);
   }
-  
+
   deletePlayer(guildId: Snowflake) {
     this.audioPlayers.delete(guildId);
   }
