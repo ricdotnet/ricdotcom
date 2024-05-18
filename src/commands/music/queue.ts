@@ -11,6 +11,7 @@ import {
 } from 'discord.js';
 import { AudioPlayer, TTrackData } from '../../lavacord/audio-player';
 import { RuntimeData } from '../../runtime-data';
+import { paginationButtons } from '../../utils';
 
 export class Queue extends Command {
   private player: AudioPlayer | null | undefined; // oof
@@ -38,7 +39,7 @@ export class Queue extends Command {
 
     const pagination: Message = await this._interaction.editReply({
       embeds: [this.buildEmbed()],
-      components: [this.buildActionRow()],
+      components: [paginationButtons(this.currentPage, this.totalPages)],
     });
 
     try {
@@ -65,7 +66,7 @@ export class Queue extends Command {
 
     confirmation.update({
       embeds: [this.buildEmbed()],
-      components: [this.buildActionRow()],
+      components: [paginationButtons(this.currentPage, this.totalPages)],
     });
 
     await this.paginate(pagination);
@@ -75,31 +76,6 @@ export class Queue extends Command {
     return (i: Interaction) => {
       return i.user.id === _i.user.id;
     };
-  }
-
-  private buildActionRow() {
-    const prevPage = new ButtonBuilder()
-      .setCustomId('prev-page')
-      .setLabel('Previous')
-      .setStyle(ButtonStyle.Primary);
-
-    const nextPage = new ButtonBuilder()
-      .setCustomId('next-page')
-      .setLabel('Next')
-      .setStyle(ButtonStyle.Primary);
-
-    if (this.currentPage === 1) {
-      prevPage.setDisabled(true);
-    }
-
-    if (this.currentPage === this.totalPages) {
-      nextPage.setDisabled(true);
-    }
-
-    return new ActionRowBuilder<ButtonBuilder>().addComponents(
-      prevPage,
-      nextPage,
-    );
   }
 
   private buildEmbed() {

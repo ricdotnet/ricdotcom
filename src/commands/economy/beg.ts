@@ -18,7 +18,6 @@ export class Beg extends Command {
       },
     });
 
-
     if (cooldown) {
       const timeLeft = Date.now() - Number(cooldown.lastUsed);
 

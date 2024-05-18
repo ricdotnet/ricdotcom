@@ -143,3 +143,30 @@ export async function updateUserBalance(
     },
   });
 }
+
+export function getUserCommandHistory(
+  userId: string,
+  guildId: string,
+  offset: number,
+  take: number,
+) {
+  return prisma.$transaction([
+    prisma.command.count({
+      where: {
+        memberUserId: userId,
+        memberGuildId: guildId,
+      },
+    }),
+    prisma.command.findMany({
+      where: {
+        memberUserId: userId,
+        memberGuildId: guildId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: offset,
+      take,
+    }),
+  ]);
+}

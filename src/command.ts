@@ -32,4 +32,8 @@ export abstract class Command {
   username(): string {
     return this._interaction.user.username;
   }
+  
+  async defer(): Promise<void> {
+    await this._interaction.deferReply();
+  }
 }
