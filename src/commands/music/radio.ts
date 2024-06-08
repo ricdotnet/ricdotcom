@@ -1,14 +1,22 @@
 import { Command } from '../../command';
-import { SlashCommandBuilder } from 'discord.js';
 import {
+  GuildBasedChannel,
+  SlashCommandBuilder,
+  Collection,
+  Snowflake,
+  GuildMember,
+} from 'discord.js';
+import {
+  AudioPlayer,
   AudioPlayerStatus,
   createAudioPlayer,
   createAudioResource,
   joinVoiceChannel,
+  VoiceConnection,
   VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { Readable } from 'stream';
-import { radio_fm } from '../../../config.json';
+import { radio_fm, radio_timout } from '../../../config.json';
 import { Logger } from '@ricdotnet/logger/dist';
 
 export class Radio extends Command {
@@ -42,16 +50,12 @@ export class Radio extends Command {
     // TODO: setting for the default channel to join, or join the current voice if none is set
 
     const channels = this._interaction.guild?.channels;
-    let channel = channels?.cache.find((c) => c.name === 'Concert');
+    let channel: GuildBasedChannel | undefined = channels?.cache.find(
+      (c) => c.name === 'Concert',
+    );
 
     if (!channel) {
-      // @ts-ignore
-      channel = this._interaction.channel;
-
-      // if (channel?.isTextBased) {
-      //   this._interaction.editReply('This is a text channel. Please use /radio in a voice channel.');
-      //   return;
-      // }
+      channel = this._interaction.channel as GuildBasedChannel;
     }
 
     if (!channel) {
@@ -89,7 +93,31 @@ export class Radio extends Command {
       console.log('Idle... trying to play again');
     });
 
+    setInterval(() => this.timeout(channel, player, connection), radio_timout || 60_000);
+
     await this._interaction.editReply('Start listening to the radio (RFM)');
+  }
+
+  async timeout(channel: GuildBasedChannel, player: AudioPlayer, connection: VoiceConnection) {
+    const voiceChannel: GuildBasedChannel | undefined | null =
+      // biome-ignore lint/style/noNonNullAssertion: channel will always be available here
+      await this._interaction.guild?.channels.fetch(channel!.id);
+
+    if (!voiceChannel) {
+      return;
+    }
+
+    if ((<Collection<Snowflake, GuildMember>>voiceChannel.members).size === 1) {
+      Logger.get().info(
+        `Closed a radio player for guild ${this._interaction.guild?.id}`,
+      );
+      this._interaction.channel?.send(
+        'There is nobody to listen... stopping the radio.',
+      );
+      player.stop();
+      connection.destroy();
+      return;
+    }
   }
 
   command(): SlashCommandBuilder {
