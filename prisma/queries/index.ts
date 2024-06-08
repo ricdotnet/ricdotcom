@@ -16,11 +16,15 @@ export async function createGuild(guildId: string) {
 export async function deleteGuild(guildId: string) {
   Logger.get().info(`Deleting guild ${guildId}`);
 
-  await prisma.guild.delete({
-    where: {
-      guildId,
-    },
-  });
+  try {
+    await prisma.guild.delete({
+      where: {
+        guildId,
+      },
+    });
+  } catch (err) {
+    Logger.get().error(`Tried deleting the bot from a non-registered guild: ${guildId}`);
+  }
 
   Logger.get().info(`Guild ${guildId} deleted`);
 }
