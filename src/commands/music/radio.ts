@@ -16,7 +16,7 @@ import {
   VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { Readable } from 'stream';
-import { radio_fm, radio_timout } from '../../../config.json';
+import { radio_fm, radio_timeout } from '../../../config.json';
 import { Logger } from '@ricdotnet/logger/dist';
 
 export class Radio extends Command {
@@ -93,7 +93,7 @@ export class Radio extends Command {
       console.log('Idle... trying to play again');
     });
 
-    setInterval(() => this.timeout(channel, player, connection), radio_timout || 60_000);
+    setInterval(() => this.timeout(channel, player, connection), radio_timeout || 60_000);
 
     await this._interaction.editReply('Start listening to the radio (RFM)');
   }
