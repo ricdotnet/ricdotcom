@@ -20,8 +20,8 @@ export class ClientReady {
     await new RuntimeData().load();
     Logger.get().info('RuntimeData container created');
 
-    await new AudioManager(readyClient.user.id, readyClient).load();
-    Logger.get().info('AudioManager created');
+    // await new AudioManager(readyClient.user.id, readyClient).load();
+    // Logger.get().info('AudioManager created');
 
     const servers = await prisma.guild.findMany();
     const commands = new RegisterCommands();

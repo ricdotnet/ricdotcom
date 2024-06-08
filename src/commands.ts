@@ -7,6 +7,8 @@ export class Commands extends Map {
   private static _instance: Commands;
   private readonly _commands: Command[] = [];
 
+  private readonly ignoredCommands: string[] = ['add', 'next', 'queue', 'start', 'stop'];
+  
   constructor() {
     super();
     if (Commands._instance !== undefined) {
@@ -22,6 +24,10 @@ export class Commands extends Map {
     const files = this.commandFiles(commandsPath);
 
     for await (const file of files) {
+      if (this.ignoredCommands.find((ic) => file.includes(ic))) {
+        continue;
+      }
+      
       const cmdFile = await import(path.join(commandsPath, file));
       const className = Object.keys(cmdFile)[0];
       const _class = new cmdFile[className]();
