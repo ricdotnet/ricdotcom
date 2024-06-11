@@ -5,6 +5,7 @@ import {
   Collection,
   Snowflake,
   GuildMember,
+  SlashCommandStringOption,
 } from 'discord.js';
 import {
   AudioPlayer,
@@ -16,14 +17,16 @@ import {
   VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { Readable } from 'stream';
-import { radio_fm, radio_timeout } from '../../../config.json';
+import { radios, radio_timeout } from '../../../config.json';
 import { Logger } from '@ricdotnet/logger/dist';
+
+type Radios = keyof typeof radios;
 
 export class Radio extends Command {
   async execute() {
     await this._interaction.deferReply();
 
-    if (!radio_fm) {
+    if (!radios) {
       this._interaction.editReply(
         'Something went wrong when trying to play radio.',
       );
@@ -33,7 +36,15 @@ export class Radio extends Command {
       return;
     }
 
-    const response = await fetch(radio_fm);
+    // @ts-ignore
+    const option: Radios = this._interaction.options.getString('radio');
+
+    if (!option) {
+      Logger.get().warn(`Tried starting a player with an invalid radio in guild ${this._interaction.guildId}`);
+      return;
+    }
+
+    const response = await fetch(radios[option]);
     if (!response.body) return;
 
     // @ts-ignore
@@ -93,9 +104,10 @@ export class Radio extends Command {
       console.log('Idle... trying to play again');
     });
 
-    setInterval(() => this.timeout(channel, player, connection), radio_timeout || 60_000);
+    // biome-ignore lint/style/noNonNullAssertion: channel will never be null here
+    setInterval(() => this.timeout(channel!, player, connection), radio_timeout || 60_000);
 
-    await this._interaction.editReply('Start listening to the radio (RFM)');
+    await this._interaction.editReply(`Start listening to the radio (${<string>option})`);
   }
 
   async timeout(channel: GuildBasedChannel, player: AudioPlayer, connection: VoiceConnection) {
@@ -124,7 +136,15 @@ export class Radio extends Command {
     return <SlashCommandBuilder>(
       new SlashCommandBuilder()
         .setName('radio')
-        .setDescription('Start listening to the radio (RFM)')
+        .setDescription('Start listening to the radio')
+        .addStringOption((option: SlashCommandStringOption) =>
+          option.setName('radio')
+            .setDescription('The radio to listen.')
+            .setRequired(true)
+            .addChoices(
+              { name: 'RFM', value: 'rfm' },
+              { name: 'Orbital', value: 'orbital' },
+            ))
     );
   }
 }
