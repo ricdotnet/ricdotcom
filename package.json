@@ -8,7 +8,7 @@
   "dependencies": {
     "@discordjs/voice": "^0.16.1",
     "@prisma/client": "^5.9.1",
-    "@ricdotnet/logger": "^0.3.0",
+    "@ricdotnet/logger": "^0.3.1",
     "discord.js": "^14.14.1",
     "ffmpeg-static": "^5.2.0",
     "lavacord": "^2.1.2-v4",
